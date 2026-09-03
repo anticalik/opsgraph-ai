@@ -134,6 +134,32 @@ function App() {
             <span>Description</span>
             <p>{result.description}</p>
           </div>
+
+          {result.predictions && (
+            <div className="full">
+              <span>Prediction breakdown</span>
+
+              {result.predictions.map((prediction) => {
+                const percentage = Math.round(prediction.confidence * 100);
+
+                return (
+                  <div className="prediction-row" key={prediction.category}>
+                    <div className="prediction-label">
+                      <span>{prediction.category}</span>
+                      <strong>{percentage}%</strong>
+                    </div>
+
+                    <div className="prediction-bar">
+                      <div
+                        className="prediction-fill"
+                        style={{ width: `${percentage}%` }}
+                      />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </section>
       )}
 

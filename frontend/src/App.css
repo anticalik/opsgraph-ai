@@ -114,7 +114,7 @@ button:disabled {
   gap: 18px;
 }
 
-.result div {
+.result > div {
   background: #0d1424;
   border-radius: 12px;
   padding: 18px;
@@ -152,4 +152,38 @@ button:disabled {
   .result .full {
     grid-column: auto;
   }
+}
+
+.prediction-row {
+  margin-top: 14px;
+}
+
+.prediction-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.prediction-label span {
+  color: #9ca3af;
+}
+
+.prediction-label strong {
+  color: #f3f4f6;
+}
+
+.prediction-bar {
+  width: 100%;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.prediction-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: #6c63ff;
+  transition: width 0.3s ease;
 }
