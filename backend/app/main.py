@@ -78,6 +78,7 @@ def analyze_incident(incident: IncidentRequest):
     )
 
     severity = severity_result["labels"][0]
+    severity_confidence = severity_result["scores"][0]
     
     db = SessionLocal()
 
@@ -118,6 +119,7 @@ def analyze_incident(incident: IncidentRequest):
         "category": category,
         "confidence": round(confidence, 3),
         "severity": severity,
+        "severity_confidence": round(severity_confidence, 3),
         "predictions": predictions
     }
 

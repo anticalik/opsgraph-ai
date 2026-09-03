@@ -132,7 +132,9 @@ function App() {
 
           <div>
             <span>Severity</span>
-            <strong>{result.severity}</strong>
+            <strong>
+              {result.severity} — {Math.round(result.severity_confidence * 100)}%
+            </strong>
           </div>
 
           <div className="full">
