@@ -130,6 +130,11 @@ function App() {
             <strong>#{result.id}</strong>
           </div>
 
+          <div>
+            <span>Severity</span>
+            <strong>{result.severity}</strong>
+          </div>
+
           <div className="full">
             <span>Description</span>
             <p>{result.description}</p>

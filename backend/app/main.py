@@ -64,6 +64,20 @@ def analyze_incident(incident: IncidentRequest):
 
     category = result["labels"][0]
     confidence = result["scores"][0]
+
+    severity_labels = [
+        "Critical",
+        "High",
+        "Medium",
+        "Low",
+    ]
+
+    severity_result = classifier(
+        incident.description,
+        candidate_labels=severity_labels
+    )
+
+    severity = severity_result["labels"][0]
     
     db = SessionLocal()
 
@@ -103,6 +117,7 @@ def analyze_incident(incident: IncidentRequest):
         "description": incident.description,
         "category": category,
         "confidence": round(confidence, 3),
+        "severity": severity,
         "predictions": predictions
     }
 
