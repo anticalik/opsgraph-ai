@@ -188,6 +188,12 @@ def find_similar_incidents(incident: IncidentRequest):
                 "id": item.id,
                 "description": item.description,
                 "category": item.category,
+                "severity": item.severity,
+                "severity_confidence": (
+                    round(item.severity_confidence, 3)
+                    if item.severity_confidence is not None
+                    else None
+                ),
                 "similarity": round(similarity, 3)
             })
 

@@ -177,8 +177,10 @@ function App() {
 
             {similarIncidents.map((item) => (
               <p key={item.id}>
-                #{item.id} — {item.description} —{" "}
-                {Math.round(item.similarity * 100)}% similarity
+                #{item.id} — {item.category}
+                {item.severity ? ` — ${item.severity}` : ""}
+                {" — "}
+                {item.description} — {Math.round(item.similarity * 100)}% similarity
               </p>
             ))}
           </div>
