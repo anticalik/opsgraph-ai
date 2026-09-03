@@ -68,15 +68,24 @@ def analyze_incident(incident: IncidentRequest):
     db = SessionLocal()
 
     try:
-        new_incident = models.Incident(
-            description=incident.description,
-            category=category,
-            confidence=confidence
+        existing_incident = (
+            db.query(models.Incident)
+            .filter(models.Incident.description == incident.description)
+            .first()
         )
 
-        db.add(new_incident)
-        db.commit()
-        db.refresh(new_incident)
+        if existing_incident:
+            new_incident = existing_incident
+        else:
+            new_incident = models.Incident(
+                description=incident.description,
+                category=category,
+                confidence=confidence
+            )
+
+            db.add(new_incident)
+            db.commit()
+            db.refresh(new_incident)
 
     finally:
         db.close()
