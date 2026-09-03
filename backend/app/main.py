@@ -95,7 +95,9 @@ def analyze_incident(incident: IncidentRequest):
             new_incident = models.Incident(
                 description=incident.description,
                 category=category,
-                confidence=confidence
+                confidence=confidence,
+                severity=severity,
+                severity_confidence=severity_confidence
             )
 
             db.add(new_incident)
@@ -140,6 +142,12 @@ def get_incidents():
                 "description": item.description,
                 "category": item.category,
                 "confidence": round(item.confidence, 3),
+                "severity": item.severity,
+                "severity_confidence": (
+                    round(item.severity_confidence, 3)
+                    if item.severity_confidence is not None
+                    else None
+                ),
                 "created_at": item.created_at,
             }
             for item in incidents

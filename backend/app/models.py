@@ -15,6 +15,9 @@ class Incident(Base):
 
     confidence = Column(Float, nullable=False)
 
+    severity = Column(String(20), nullable=True)
+    severity_confidence = Column(Float, nullable=True)
+
     created_at = Column(
         DateTime(timezone=True),
         server_default=func.now(),
