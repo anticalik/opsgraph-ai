@@ -64,6 +64,7 @@ def analyze_incident(incident: IncidentRequest):
 
     category = result["labels"][0]
     confidence = result["scores"][0]
+    historical_suggestion = None
 
     severity_labels = [
         "Critical",
@@ -83,6 +84,46 @@ def analyze_incident(incident: IncidentRequest):
     db = SessionLocal()
 
     try:
+        if confidence < 0.50:
+            incidents = db.query(models.Incident).all()
+
+            if incidents:
+                query_embedding = embedding_model.encode(
+                    incident.description,
+                    convert_to_tensor=True
+                )
+
+                best_match = None
+                best_similarity = 0
+
+                for item in incidents:
+                    if item.description == incident.description:
+                        continue
+                    incident_embedding = embedding_model.encode(
+                        item.description,
+                        convert_to_tensor=True
+                    )
+
+                    similarity = util.cos_sim(
+                        query_embedding,
+                        incident_embedding
+                    ).item()
+
+                    if similarity > best_similarity:
+                        best_similarity = similarity
+                        best_match = item
+
+                if (
+                    best_match is not None
+                    and best_similarity >= 0.75
+                    and best_match.category != category
+                ):
+                    historical_suggestion = {
+                        "category": best_match.category,
+                        "similarity": round(best_similarity, 3),
+                        "incident_id": best_match.id
+                    }
+
         existing_incident = (
             db.query(models.Incident)
             .filter(models.Incident.description == incident.description)
@@ -122,6 +163,7 @@ def analyze_incident(incident: IncidentRequest):
         "confidence": round(confidence, 3),
         "severity": severity,
         "severity_confidence": round(severity_confidence, 3),
+        "historical_suggestion": historical_suggestion,
         "predictions": predictions
     }
 
@@ -213,15 +255,4 @@ def find_similar_incidents(incident: IncidentRequest):
     finally:
         db.close()
 
-    results = [
-        item
-        for item in results
-        if item["similarity"] >= 0.50
-    ]
-
-    results.sort(
-        key=lambda item: item["similarity"],
-        reverse=True
-    )
-
-    return results[:5]
+    

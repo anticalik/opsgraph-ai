@@ -137,6 +137,17 @@ function App() {
             </strong>
           </div>
 
+          {result.historical_suggestion && (
+            <div className="full">
+              <span>Historical suggestion</span>
+              <p>
+                {result.historical_suggestion.category} — based on incident #
+                {result.historical_suggestion.incident_id} —{" "}
+                {Math.round(result.historical_suggestion.similarity * 100)}% similarity
+              </p>
+            </div>
+          )}
+
           <div className="full">
             <span>Description</span>
             <p>{result.description}</p>
