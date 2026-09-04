@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from transformers import pipeline
 
@@ -48,6 +48,11 @@ def root():
 
 @app.post("/incidents/analyze")
 def analyze_incident(incident: IncidentRequest):
+    if not incident.description.strip():
+        raise HTTPException(
+            status_code=400,
+            detail="Incident description cannot be empty"
+        )
     labels = [
         "Database",
         "Network",
