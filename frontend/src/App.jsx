@@ -9,6 +9,7 @@ function App() {
   const [similarIncidents, setSimilarIncidents] = useState([]);
   const [incidents, setIncidents] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
+  const [stats, setStats] = useState(null);
 
   async function loadIncidents() {
     try {
@@ -25,8 +26,24 @@ function App() {
     }
   }
 
+  async function loadStats() {
+    try {
+      const response = await fetch("http://127.0.0.1:8001/stats");
+
+      if (!response.ok) {
+        throw new Error("Failed to load stats");
+      }
+
+      const data = await response.json();
+      setStats(data);
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
   useEffect(() => {
     loadIncidents();
+    loadStats();
   }, []);
 
   async function analyzeIncident() {
@@ -61,6 +78,7 @@ function App() {
       setResult(data);
       setSelectedCategory(data.recommended_category || data.category);
       loadIncidents();
+      loadStats();
 
       const similarResponse = await fetch(
       "http://127.0.0.1:8001/incidents/similar",
@@ -121,6 +139,7 @@ function App() {
     }));
 
     loadIncidents();
+    loadStats();
   } catch (err) {
     console.error(err);
     setError("Failed to update category");
@@ -265,6 +284,28 @@ function App() {
                 {item.severity ? ` — ${item.severity}` : ""}
                 {" — "}
                 {item.description} — {Math.round(item.similarity * 100)}% similarity
+              </p>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {stats && (
+        <section className="result">
+          <div className="full">
+            <span>System statistics</span>
+
+            <p>Total incidents — {stats.total_incidents}</p>
+            <p>Human corrected — {stats.manually_corrected}</p>
+            <p>
+              Average AI confidence — {Math.round(stats.average_confidence * 100)}%
+            </p>
+
+            <span>Category distribution</span>
+
+            {Object.entries(stats.category_counts).map(([category, count]) => (
+              <p key={category}>
+                {category} — {count}
               </p>
             ))}
           </div>

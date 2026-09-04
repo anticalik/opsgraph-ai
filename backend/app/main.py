@@ -334,4 +334,39 @@ def find_similar_incidents(incident: IncidentRequest):
     finally:
         db.close()
 
-    
+@app.get("/stats")
+def get_stats():
+    db = SessionLocal()
+
+    try:
+        incidents = db.query(models.Incident).all()
+
+        total_incidents = len(incidents)
+
+        manually_corrected = sum(
+            1 for item in incidents
+            if item.manually_corrected
+        )
+
+        category_counts = {}
+
+        for item in incidents:
+            category_counts[item.category] = (
+                category_counts.get(item.category, 0) + 1
+            )
+
+        average_confidence = (
+            sum(item.confidence for item in incidents) / total_incidents
+            if total_incidents > 0
+            else 0
+        )
+
+        return {
+            "total_incidents": total_incidents,
+            "manually_corrected": manually_corrected,
+            "average_confidence": round(average_confidence, 3),
+            "category_counts": category_counts
+        }
+
+    finally:
+        db.close()
