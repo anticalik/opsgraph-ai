@@ -225,6 +225,8 @@ def find_similar_incidents(incident: IncidentRequest):
         results = []
 
         for item in incidents:
+            if item.description == incident.description:
+                continue
             incident_embedding = embedding_model.encode(
                 item.description,
                 convert_to_tensor=True
