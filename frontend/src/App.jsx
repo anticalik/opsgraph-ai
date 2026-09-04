@@ -157,7 +157,9 @@ function App() {
             <div className="full">
               <span>Recommended classification</span>
               <p>
-                <strong>{result.recommended_category}</strong>
+                <strong>
+                  {result.recommended_category} — {Math.round(result.recommendation_score * 100)}%
+                </strong>
               </p>
               <p>{result.recommendation_reason}</p>
             </div>

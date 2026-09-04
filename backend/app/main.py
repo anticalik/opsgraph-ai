@@ -67,6 +67,7 @@ def analyze_incident(incident: IncidentRequest):
     historical_suggestion = None
     recommended_category = category
     recommendation_reason = "AI classification accepted"
+    recommendation_score = confidence
 
     severity_labels = [
         "Critical",
@@ -130,6 +131,7 @@ def analyze_incident(incident: IncidentRequest):
                     recommendation_reason = (
                         "Low AI confidence and strong historical match"
                     )
+                    recommendation_score = best_similarity
 
         existing_incident = (
             db.query(models.Incident)
@@ -173,6 +175,7 @@ def analyze_incident(incident: IncidentRequest):
         "historical_suggestion": historical_suggestion,
         "recommended_category": recommended_category,
         "recommendation_reason": recommendation_reason,
+        "recommendation_score": round(recommendation_score, 3),
         "predictions": predictions
     }
 
