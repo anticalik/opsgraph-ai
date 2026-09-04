@@ -406,6 +406,9 @@ const filteredIncidents = incidents
             {filteredIncidents.slice(0, 5).map((item) => (
               <p
                 key={item.id}
+                className={`incident-row ${
+                  selectedIncident?.id === item.id ? "selected" : ""
+                }`}
                 onClick={() => setSelectedIncident(item)}
               >
                 #{item.id} — {item.category}
