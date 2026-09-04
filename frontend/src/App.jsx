@@ -29,7 +29,12 @@ function App() {
   }, []);
 
   async function analyzeIncident() {
-    if (!description.trim()) return;
+    if (!description.trim()) {
+      setError("Please enter an incident description.");
+      setResult(null);
+      setSimilarIncidents([]);
+      return;
+    }
 
     setLoading(true);
     setError("");
