@@ -261,6 +261,7 @@ function App() {
             {similarIncidents.map((item) => (
               <p key={item.id}>
                 #{item.id} — {item.category}
+                {item.manually_corrected ? " — Human corrected" : ""}
                 {item.severity ? ` — ${item.severity}` : ""}
                 {" — "}
                 {item.description} — {Math.round(item.similarity * 100)}% similarity
@@ -278,6 +279,7 @@ function App() {
             {incidents.slice(0, 5).map((item) => (
               <p key={item.id}>
                 #{item.id} — {item.category}
+                {item.manually_corrected ? " — Human corrected" : ""}
                 {item.severity ? ` — ${item.severity}` : ""}
                 {" — "}
                 {item.description}

@@ -308,6 +308,7 @@ def find_similar_incidents(incident: IncidentRequest):
                 "id": item.id,
                 "description": item.description,
                 "category": item.category,
+                "manually_corrected": item.manually_corrected,
                 "severity": item.severity,
                 "severity_confidence": (
                     round(item.severity_confidence, 3)
