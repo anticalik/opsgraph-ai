@@ -8,6 +8,7 @@ function App() {
   const [error, setError] = useState("");
   const [similarIncidents, setSimilarIncidents] = useState([]);
   const [incidents, setIncidents] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState("");
 
   async function loadIncidents() {
     try {
@@ -58,6 +59,7 @@ function App() {
 
       const data = await response.json();
       setResult(data);
+      setSelectedCategory(data.recommended_category || data.category);
       loadIncidents();
 
       const similarResponse = await fetch(
@@ -88,6 +90,42 @@ function App() {
       setLoading(false);
     }
   }
+
+  async function updateCategory() {
+  if (!result || !selectedCategory) return;
+
+  try {
+    const response = await fetch(
+      `http://127.0.0.1:8001/incidents/${result.id}/category`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          category: selectedCategory,
+        }),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to update category");
+    }
+
+    const data = await response.json();
+
+    setResult((current) => ({
+      ...current,
+      category: data.category,
+      recommended_category: data.category,
+    }));
+
+    loadIncidents();
+  } catch (err) {
+    console.error(err);
+    setError("Failed to update category");
+  }
+}
 
   return (
     <main className="app">
@@ -158,9 +196,26 @@ function App() {
               <span>Recommended classification</span>
               <p>
                 <strong>
-                  {result.recommended_category} — {Math.round(result.recommendation_score * 100)}%
+                  {result.recommended_category} – {Math.round(result.recommendation_score * 100)}%
                 </strong>
               </p>
+
+              <select
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+              >
+                <option value="Database">Database</option>
+                <option value="Network">Network</option>
+                <option value="Deployment">Deployment</option>
+                <option value="Authentication">Authentication</option>
+                <option value="Storage">Storage</option>
+                <option value="Performance">Performance</option>
+              </select>
+
+              <button type="button" onClick={updateCategory}>
+                Update category
+              </button>
+
               <p>{result.recommendation_reason}</p>
             </div>
           )}

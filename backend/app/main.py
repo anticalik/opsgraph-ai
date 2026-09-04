@@ -37,6 +37,8 @@ embedding_model = SentenceTransformer("all-MiniLM-L6-v2")
 class IncidentRequest(BaseModel):
     description: str
 
+class IncidentCategoryUpdate(BaseModel):
+    category: str
 
 @app.get("/")
 def root():
@@ -211,6 +213,53 @@ def get_incidents():
             }
             for item in incidents
         ]
+
+    finally:
+        db.close()
+
+@app.patch("/incidents/{incident_id}/category")
+def update_incident_category(
+    incident_id: int,
+    update: IncidentCategoryUpdate
+):
+    allowed_categories = {
+        "Database",
+        "Network",
+        "Deployment",
+        "Authentication",
+        "Storage",
+        "Performance"
+    }
+
+    if update.category not in allowed_categories:
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid incident category"
+        )
+
+    db = SessionLocal()
+
+    try:
+        incident = (
+            db.query(models.Incident)
+            .filter(models.Incident.id == incident_id)
+            .first()
+        )
+
+        if incident is None:
+            raise HTTPException(
+                status_code=404,
+                detail="Incident not found"
+            )
+
+        incident.category = update.category
+        db.commit()
+        db.refresh(incident)
+
+        return {
+            "id": incident.id,
+            "category": incident.category
+        }
 
     finally:
         db.close()
