@@ -148,6 +148,16 @@ function App() {
             </div>
           )}
 
+          {result.recommended_category && (
+            <div className="full">
+              <span>Recommended classification</span>
+              <p>
+                <strong>{result.recommended_category}</strong>
+              </p>
+              <p>{result.recommendation_reason}</p>
+            </div>
+          )}
+
           <div className="full">
             <span>Description</span>
             <p>{result.description}</p>
