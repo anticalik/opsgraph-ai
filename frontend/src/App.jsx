@@ -11,6 +11,7 @@ function App() {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [stats, setStats] = useState(null);
   const [categoryFilter, setCategoryFilter] = useState("All");
+  const [severityFilter, setSeverityFilter] = useState("All");
 
   async function loadIncidents() {
     try {
@@ -331,10 +332,22 @@ function App() {
               <option value="Performance">Performance</option>
             </select>
 
+            <select
+              value={severityFilter}
+              onChange={(e) => setSeverityFilter(e.target.value)}
+            >
+              <option value="All">All severities</option>
+              <option value="Critical">Critical</option>
+              <option value="High">High</option>
+              <option value="Medium">Medium</option>
+              <option value="Low">Low</option>
+            </select>
+
             {incidents
               .filter(
                 (item) =>
-                  categoryFilter === "All" || item.category === categoryFilter
+                  (categoryFilter === "All" || item.category === categoryFilter) &&
+                  (severityFilter === "All" || item.severity === severityFilter)
               )
               .slice(0, 5)
               .map((item) => (
