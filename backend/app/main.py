@@ -105,6 +105,7 @@ def analyze_incident(incident: IncidentRequest):
 
                 best_match = None
                 best_similarity = 0
+                best_raw_similarity = 0
 
                 for item in incidents:
                     if item.description == incident.description:
@@ -119,18 +120,24 @@ def analyze_incident(incident: IncidentRequest):
                         incident_embedding
                     ).item()
 
-                    if similarity > best_similarity:
-                        best_similarity = similarity
+                    weighted_similarity = similarity
+
+                    if item.manually_corrected:
+                        weighted_similarity += 0.05
+
+                    if weighted_similarity > best_similarity:
+                        best_similarity = weighted_similarity
+                        best_raw_similarity = similarity
                         best_match = item
 
                 if (
                     best_match is not None
-                    and best_similarity >= 0.80
+                    and best_raw_similarity >= 0.80
                     and best_match.category != category
                 ):
                     historical_suggestion = {
                         "category": best_match.category,
-                        "similarity": round(best_similarity, 3),
+                        "similarity": round(best_raw_similarity, 3),
                         "incident_id": best_match.id
                     }
 
@@ -138,7 +145,7 @@ def analyze_incident(incident: IncidentRequest):
                     recommendation_reason = (
                         "Low AI confidence and strong historical match"
                     )
-                    recommendation_score = best_similarity
+                    recommendation_score = best_raw_similarity
 
         existing_incident = (
             db.query(models.Incident)
@@ -253,12 +260,14 @@ def update_incident_category(
             )
 
         incident.category = update.category
+        incident.manually_corrected = True
         db.commit()
         db.refresh(incident)
 
         return {
             "id": incident.id,
-            "category": incident.category
+            "category": incident.category,
+            "manually_corrected": incident.manually_corrected
         }
 
     finally:

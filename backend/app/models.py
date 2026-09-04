@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, Text, DateTime
+from sqlalchemy import Column, Integer, String, Float, Text, DateTime, Boolean
 from sqlalchemy.sql import func
 
 from .database import Base
@@ -12,6 +12,8 @@ class Incident(Base):
     description = Column(Text, nullable=False)
 
     category = Column(String(100), nullable=False)
+
+    manually_corrected = Column(Boolean, nullable=False, default=False)
 
     confidence = Column(Float, nullable=False)
 
