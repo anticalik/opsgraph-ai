@@ -117,7 +117,7 @@ def analyze_incident(incident: IncidentRequest):
 
                 if (
                     best_match is not None
-                    and best_similarity >= 0.75
+                    and best_similarity >= 0.80
                     and best_match.category != category
                 ):
                     historical_suggestion = {
