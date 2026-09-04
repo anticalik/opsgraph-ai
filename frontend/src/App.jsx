@@ -10,6 +10,7 @@ function App() {
   const [incidents, setIncidents] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [stats, setStats] = useState(null);
+  const [categoryFilter, setCategoryFilter] = useState("All");
 
   async function loadIncidents() {
     try {
@@ -317,7 +318,26 @@ function App() {
           <div className="full">
             <span>Recent incidents</span>
 
-            {incidents.slice(0, 5).map((item) => (
+            <select
+              value={categoryFilter}
+              onChange={(e) => setCategoryFilter(e.target.value)}
+            >
+              <option value="All">All categories</option>
+              <option value="Database">Database</option>
+              <option value="Network">Network</option>
+              <option value="Deployment">Deployment</option>
+              <option value="Authentication">Authentication</option>
+              <option value="Storage">Storage</option>
+              <option value="Performance">Performance</option>
+            </select>
+
+            {incidents
+              .filter(
+                (item) =>
+                  categoryFilter === "All" || item.category === categoryFilter
+              )
+              .slice(0, 5)
+              .map((item) => (
               <p key={item.id}>
                 #{item.id} — {item.category}
                 {item.manually_corrected ? " — Human corrected" : ""}
