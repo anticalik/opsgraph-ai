@@ -12,6 +12,7 @@ function App() {
   const [stats, setStats] = useState(null);
   const [categoryFilter, setCategoryFilter] = useState("All");
   const [severityFilter, setSeverityFilter] = useState("All");
+  const [searchQuery, setSearchQuery] = useState("");
 
   async function loadIncidents() {
     try {
@@ -343,11 +344,22 @@ function App() {
               <option value="Low">Low</option>
             </select>
 
+            <input
+              type="text"
+              placeholder="Search incidents..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+
             {incidents
               .filter(
                 (item) =>
                   (categoryFilter === "All" || item.category === categoryFilter) &&
-                  (severityFilter === "All" || item.severity === severityFilter)
+                  (severityFilter === "All" || item.severity === severityFilter) &&
+                  (
+                    item.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                    item.category.toLowerCase().includes(searchQuery.toLowerCase())
+                  )
               )
               .slice(0, 5)
               .map((item) => (
