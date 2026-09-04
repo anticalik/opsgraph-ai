@@ -209,6 +209,7 @@ def get_incidents():
                 "id": item.id,
                 "description": item.description,
                 "category": item.category,
+                "manually_corrected": item.manually_corrected,
                 "confidence": round(item.confidence, 3),
                 "severity": item.severity,
                 "severity_confidence": (
