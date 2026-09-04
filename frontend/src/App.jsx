@@ -13,6 +13,7 @@ function App() {
   const [categoryFilter, setCategoryFilter] = useState("All");
   const [severityFilter, setSeverityFilter] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
+  const [sortOrder, setSortOrder] = useState("newest");
 
   async function loadIncidents() {
     try {
@@ -148,6 +149,34 @@ function App() {
     setError("Failed to update category");
   }
 }
+  const severityRank = {
+    Critical: 4,
+    High: 3,
+    Medium: 2,
+    Low: 1,
+  };
+
+const filteredIncidents = incidents
+  .filter(
+    (item) =>
+      (categoryFilter === "All" || item.category === categoryFilter) &&
+      (severityFilter === "All" || item.severity === severityFilter) &&
+      (
+        item.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.category.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+  )
+  .sort((a, b) => {
+    if (sortOrder === "oldest") {
+      return new Date(a.created_at) - new Date(b.created_at);
+    }
+
+    if (sortOrder === "severity") {
+      return (severityRank[b.severity] || 0) - (severityRank[a.severity] || 0);
+    }
+
+    return new Date(b.created_at) - new Date(a.created_at);
+  });
 
   return (
     <main className="app">
@@ -320,49 +349,49 @@ function App() {
           <div className="full">
             <span>Recent incidents</span>
 
-            <select
-              value={categoryFilter}
-              onChange={(e) => setCategoryFilter(e.target.value)}
-            >
-              <option value="All">All categories</option>
-              <option value="Database">Database</option>
-              <option value="Network">Network</option>
-              <option value="Deployment">Deployment</option>
-              <option value="Authentication">Authentication</option>
-              <option value="Storage">Storage</option>
-              <option value="Performance">Performance</option>
-            </select>
+            <div className="incident-filters">
+              <select
+                value={categoryFilter}
+                onChange={(e) => setCategoryFilter(e.target.value)}
+              >
+                <option value="All">All categories</option>
+                <option value="Database">Database</option>
+                <option value="Network">Network</option>
+                <option value="Deployment">Deployment</option>
+                <option value="Authentication">Authentication</option>
+                <option value="Storage">Storage</option>
+                <option value="Performance">Performance</option>
+              </select>
 
-            <select
-              value={severityFilter}
-              onChange={(e) => setSeverityFilter(e.target.value)}
-            >
-              <option value="All">All severities</option>
-              <option value="Critical">Critical</option>
-              <option value="High">High</option>
-              <option value="Medium">Medium</option>
-              <option value="Low">Low</option>
-            </select>
+              <select
+                value={severityFilter}
+                onChange={(e) => setSeverityFilter(e.target.value)}
+              >
+                <option value="All">All severities</option>
+                <option value="Critical">Critical</option>
+                <option value="High">High</option>
+                <option value="Medium">Medium</option>
+                <option value="Low">Low</option>
+              </select>
 
-            <input
-              type="text"
-              placeholder="Search incidents..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
+              <select
+                value={sortOrder}
+                onChange={(e) => setSortOrder(e.target.value)}
+              >
+                <option value="newest">Newest first</option>
+                <option value="oldest">Oldest first</option>
+                <option value="severity">Highest severity</option>
+              </select>
 
-            {incidents
-              .filter(
-                (item) =>
-                  (categoryFilter === "All" || item.category === categoryFilter) &&
-                  (severityFilter === "All" || item.severity === severityFilter) &&
-                  (
-                    item.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                    item.category.toLowerCase().includes(searchQuery.toLowerCase())
-                  )
-              )
-              .slice(0, 5)
-              .map((item) => (
+              <input
+                type="text"
+                placeholder="Search incidents..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+
+            {filteredIncidents.slice(0, 5).map((item) => (
               <p key={item.id}>
                 #{item.id} — {item.category}
                 {item.manually_corrected ? " — Human corrected" : ""}
@@ -371,6 +400,10 @@ function App() {
                 {item.description}
               </p>
             ))}
+
+            {filteredIncidents.length === 0 && (
+              <p>No incidents match the current filters.</p>
+            )}
           </div>
         </section>
       )}

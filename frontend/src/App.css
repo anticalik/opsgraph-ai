@@ -187,3 +187,32 @@ button:disabled {
   background: #6c63ff;
   transition: width 0.3s ease;
 }
+
+.incident-filters {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.2fr 2fr;
+  gap: 10px;
+  margin: 14px 0 18px;
+}
+
+.incident-filters select,
+.incident-filters input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 9px 10px;
+  border: 1px solid #334155;
+  border-radius: 6px;
+  background: #0f172a;
+  color: #e5e7eb;
+  font: inherit;
+}
+
+.incident-filters input::placeholder {
+  color: #64748b;
+}
+
+@media (max-width: 600px) {
+  .incident-filters {
+    grid-template-columns: 1fr;
+  }
+}
