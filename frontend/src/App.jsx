@@ -177,6 +177,13 @@ const filteredIncidents = incidents
 
     return new Date(b.created_at) - new Date(a.created_at);
   });
+  
+  function resetFilters() {
+    setCategoryFilter("All");
+    setSeverityFilter("All");
+    setSortOrder("newest");
+    setSearchQuery("");
+  }
 
   return (
     <main className="app">
@@ -389,6 +396,10 @@ const filteredIncidents = incidents
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
+
+              <button type="button" onClick={resetFilters}>
+                Reset filters
+              </button>
             </div>
 
             {filteredIncidents.slice(0, 5).map((item) => (
