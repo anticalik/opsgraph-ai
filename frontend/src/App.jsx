@@ -14,6 +14,7 @@ function App() {
   const [severityFilter, setSeverityFilter] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [sortOrder, setSortOrder] = useState("newest");
+  const [selectedIncident, setSelectedIncident] = useState(null);
 
   async function loadIncidents() {
     try {
@@ -403,7 +404,10 @@ const filteredIncidents = incidents
             </div>
 
             {filteredIncidents.slice(0, 5).map((item) => (
-              <p key={item.id}>
+              <p
+                key={item.id}
+                onClick={() => setSelectedIncident(item)}
+              >
                 #{item.id} — {item.category}
                 {item.manually_corrected ? " — Human corrected" : ""}
                 {item.severity ? ` — ${item.severity}` : ""}
@@ -411,6 +415,39 @@ const filteredIncidents = incidents
                 {item.description}
               </p>
             ))}
+
+            {selectedIncident && (
+              <div className="incident-details">
+                <span>Selected incident #{selectedIncident.id}</span>
+
+                <p><strong>Category:</strong> {selectedIncident.category}</p>
+                <p><strong>Severity:</strong> {selectedIncident.severity || "Unknown"}</p>
+                <p>
+                  <strong>AI confidence:</strong>{" "}
+                  {Math.round((selectedIncident.confidence || 0) * 100)}%
+                </p>
+
+                <p>
+                  <strong>Human corrected:</strong>{" "}
+                  {selectedIncident.manually_corrected ? "Yes" : "No"}
+                </p>
+
+                <p>
+                  <strong>Created:</strong>{" "}
+                  {selectedIncident.created_at
+                    ? new Date(selectedIncident.created_at).toLocaleString()
+                    : "Unknown"}
+                </p>
+                <p><strong>Description:</strong> {selectedIncident.description}</p>
+
+                <button
+                  type="button"
+                  onClick={() => setSelectedIncident(null)}
+                >
+                  Close
+                </button>
+              </div>
+            )}
 
             {filteredIncidents.length === 0 && (
               <p>No incidents match the current filters.</p>
