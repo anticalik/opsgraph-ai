@@ -215,7 +215,10 @@ function App() {
 
             {incidents.slice(0, 5).map((item) => (
               <p key={item.id}>
-                #{item.id} — {item.category} — {item.description}
+                #{item.id} — {item.category}
+                {item.severity ? ` — ${item.severity}` : ""}
+                {" — "}
+                {item.description}
               </p>
             ))}
           </div>
