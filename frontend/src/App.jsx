@@ -83,6 +83,15 @@ function App() {
 
       const data = await response.json();
       setResult(data);
+      setSelectedIncident({
+        id: data.id,
+        category: data.category,
+        severity: data.severity,
+        confidence: data.confidence,
+        manually_corrected: false,
+        created_at: data.created_at,
+        description: data.description,
+      });
       setSelectedCategory(data.recommended_category || data.category);
       loadIncidents();
       loadStats();
@@ -463,27 +472,29 @@ const filteredIncidents = incidents
             ))}
 
             <div className="pagination">
-              <button
-                type="button"
-                onClick={() => setCurrentPage((page) => Math.max(1, page - 1))}
-                disabled={currentPage === 1}
-              >
-                Previous
-              </button>
+              <div className="pagination-buttons">
+                <button
+                  type="button"
+                  onClick={() => setCurrentPage((page) => Math.max(1, page - 1))}
+                  disabled={currentPage === 1}
+                >
+                  Previous
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    setCurrentPage((page) => Math.min(totalPages, page + 1))
+                  }
+                  disabled={currentPage === totalPages}
+                >
+                  Next
+                </button>
+              </div>
 
               <span>
                 Page {currentPage} of {totalPages}
               </span>
-
-              <button
-                type="button"
-                onClick={() =>
-                  setCurrentPage((page) => Math.min(totalPages, page + 1))
-                }
-                disabled={currentPage === totalPages}
-              >
-                Next
-              </button>
             </div>
 
             {selectedIncident && (
