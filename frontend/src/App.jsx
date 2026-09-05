@@ -143,6 +143,18 @@ function App() {
       recommended_category: data.category,
     }));
 
+    setSelectedIncident((current) => {
+      if (!current || current.id !== result.id) {
+        return current;
+      }
+
+      return {
+        ...current,
+        category: data.category,
+        manually_corrected: true,
+      };
+    });
+
     loadIncidents();
     loadStats();
   } catch (err) {
