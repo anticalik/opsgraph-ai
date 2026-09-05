@@ -1,5 +1,21 @@
+# Python
 backend/.venv/
+.venv/
+venv/
 __pycache__/
 *.pyc
-.DS_Store
+
+# Node / Vite
+node_modules/
+dist/
+
+# Environment files
 .env
+.env.*
+!.env.example
+
+# macOS
+.DS_Store
+
+# VS Code
+.vscode/
