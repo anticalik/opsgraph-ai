@@ -15,6 +15,8 @@ function App() {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortOrder, setSortOrder] = useState("newest");
   const [selectedIncident, setSelectedIncident] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const incidentsPerPage = 5;
 
   async function loadIncidents() {
     try {
@@ -190,12 +192,25 @@ const filteredIncidents = incidents
 
     return new Date(b.created_at) - new Date(a.created_at);
   });
+
+  const totalPages = Math.max(
+    1,
+    Math.ceil(filteredIncidents.length / incidentsPerPage)
+  );
+
+  const startIndex = (currentPage - 1) * incidentsPerPage;
+
+  const paginatedIncidents = filteredIncidents.slice(
+    startIndex,
+    startIndex + incidentsPerPage
+  );
   
   function resetFilters() {
     setCategoryFilter("All");
     setSeverityFilter("All");
     setSortOrder("newest");
     setSearchQuery("");
+    setCurrentPage(1);
     setError("");
   }
 
@@ -376,7 +391,10 @@ const filteredIncidents = incidents
             <div className="incident-filters">
               <select
                 value={categoryFilter}
-                onChange={(e) => setCategoryFilter(e.target.value)}
+                onChange={(e) => {
+                  setCategoryFilter(e.target.value);
+                  setCurrentPage(1);
+                }}
               >
                 <option value="All">All categories</option>
                 <option value="Database">Database</option>
@@ -389,7 +407,10 @@ const filteredIncidents = incidents
 
               <select
                 value={severityFilter}
-                onChange={(e) => setSeverityFilter(e.target.value)}
+                onChange={(e) => {
+                  setSeverityFilter(e.target.value);
+                  setCurrentPage(1);
+                }}
               >
                 <option value="All">All severities</option>
                 <option value="Critical">Critical</option>
@@ -400,7 +421,10 @@ const filteredIncidents = incidents
 
               <select
                 value={sortOrder}
-                onChange={(e) => setSortOrder(e.target.value)}
+                onChange={(e) => {
+                  setSortOrder(e.target.value);
+                  setCurrentPage(1);
+                }}
               >
                 <option value="newest">Newest first</option>
                 <option value="oldest">Oldest first</option>
@@ -411,7 +435,10 @@ const filteredIncidents = incidents
                 type="text"
                 placeholder="Search incidents..."
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
+                  setCurrentPage(1);
+                }}
               />
 
               <button type="button" onClick={resetFilters}>
@@ -419,7 +446,7 @@ const filteredIncidents = incidents
               </button>
             </div>
 
-            {filteredIncidents.slice(0, 5).map((item) => (
+            {paginatedIncidents.map((item) => (
               <p
                 key={item.id}
                 className={`incident-row ${
@@ -434,6 +461,30 @@ const filteredIncidents = incidents
                 {item.description}
               </p>
             ))}
+
+            <div className="pagination">
+              <button
+                type="button"
+                onClick={() => setCurrentPage((page) => Math.max(1, page - 1))}
+                disabled={currentPage === 1}
+              >
+                Previous
+              </button>
+
+              <span>
+                Page {currentPage} of {totalPages}
+              </span>
+
+              <button
+                type="button"
+                onClick={() =>
+                  setCurrentPage((page) => Math.min(totalPages, page + 1))
+                }
+                disabled={currentPage === totalPages}
+              >
+                Next
+              </button>
+            </div>
 
             {selectedIncident && (
               <div className="incident-details">
