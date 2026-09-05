@@ -184,6 +184,7 @@ const filteredIncidents = incidents
     setSeverityFilter("All");
     setSortOrder("newest");
     setSearchQuery("");
+    setError("");
   }
 
   return (
@@ -203,7 +204,10 @@ const filteredIncidents = incidents
         <textarea
           id="incident"
           value={description}
-          onChange={(event) => setDescription(event.target.value)}
+          onChange={(event) => {
+            setDescription(event.target.value);
+            setError("");
+          }}
           placeholder="Example: Payment API starts timing out after deployment..."
           rows="6"
         />
