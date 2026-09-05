@@ -104,3 +104,35 @@ http://localhost:5173
 ```
 
 Keep both the backend and frontend terminals running while using the application.
+
+## Screenshots
+
+### Incident Analysis
+
+Enter an operational incident and let OpsGraph AI classify its category and severity.
+
+![Incident input](docs/screenshots/01-incident-input.png)
+
+### Classification Results
+
+View the predicted category, confidence score, severity, and prediction breakdown. The AI-generated category can also be corrected manually.
+
+![Analysis results](docs/screenshots/02-analysis-results.png)
+
+### Historical Similarity Analysis
+
+Compare the analyzed incident with similar historical incidents and view system statistics.
+
+![Similar incidents](docs/screenshots/03-similar-incidents.png)
+
+### Incident History
+
+Browse, search, filter, sort, and paginate through previously analyzed incidents.
+
+![Incident history](docs/screenshots/04-incident-history.png)
+
+### Incident Details
+
+Select an incident from the history to inspect its classification, severity, confidence, correction status, and description.
+
+![Incident details](docs/screenshots/05-incident-details.png)
